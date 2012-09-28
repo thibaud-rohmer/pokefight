@@ -17,8 +17,6 @@ def clear():
 
 s = socket.socket()         # Create a socket object
 host = socket.gethostname() # Get local machine name
-host = "threesim.ucd.ie"
-port = 4241              # Reserve a port for your service.
 port = 17502
  
 print 'Connecting to ', host, port
