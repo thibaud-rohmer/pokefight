@@ -48,52 +48,52 @@ def main(argv=None):
 	s.connect((host, port))
 
 
-	pokemons = []
-	for i in range(2):
+	pokemons = [0]*2
+
+
+
+	while True:
 		msg = s.recv(1024)
-		pokemons_sock = msg.split('\n')
-
-
-		for i in range(len(pokemons_sock)-1) :
-			pika = pokemons_sock[i].split('\t')
-			attacks = []
-			attacks.append(Attack(pika[3],int(pika[4])))
-			attacks.append(Attack(pika[5],int(pika[6])))
-			attacks.append(Attack(pika[7],int(pika[8])))
-			attacks.append(Attack(pika[9],int(pika[10])))
-			pokemons.append(Pokemon(pika[0],int(pika[1]),int(pika[2]),attacks,pika[11],pika[12]))
-
-
-	print pokemons
-
-	while (pokemons[0].life > 0 and pokemons[1].life > 0):
-		for i in range(2):
-			msg = s.recv(1024) # Attend l'ordre...
-			lives = msg.split('\t')
-			pokemons[0].life = int(lives[1])
-			pokemons[1].life = int(lives[2])
-	
+		parsed = msg.split('\t')
+		code = parsed[0]
+		
+		if(code == 'LIVES'):
+			# Update lives
+			pokemons[0].life = int(parsed[1])
+			pokemons[1].life = int(parsed[2])
+			
 			clear()
 			pokemons[1].disp_front()
 			pokemons[0].disp_back()
 			pokemons[0].disp_attak()
-	
-		if(pokemons[0].life <= 0 or pokemons[1].life <= 0):
-			break
-		msg = raw_input("Attaque [1-4] : ")
-		s.send(msg)
 
-	clear();
-	if(pokemons[0].life <= 0):
-		print "You lose."
-		for i in range(4):
-			print ""
-	else:
-		print "You win."
-		for i in range(4):
-			print ""
+		if(code == 'GO'):
+			# Select attack	
+			msg = raw_input("Select Attack [1-4] : ")
+			s.send(msg)
 
+		if(code == 'ATT'):
+			# Other pokemon attacked
+			print pokemons[1].name + " used : ",parsed[1]
 
+		if(code == 'LOSE'):
+			# End, you lose
+			print "You lose."
+			exit(0)
+			
+		if(code == 'WIN'):
+			# End, you win
+			print "You win."
+			exit(0)
+			
+		if(code == 'POKE'):
+			# Infos on a pokemon
+			attacks = []
+			attacks.append(Attack(parsed[5],int(parsed[6])))
+			attacks.append(Attack(parsed[7],int(parsed[8])))
+			attacks.append(Attack(parsed[9],int(parsed[10])))
+			attacks.append(Attack(parsed[11],int(parsed[12])))
+			pokemons[int(parsed[1])] = Pokemon(parsed[2],int(parsed[3]),int(parsed[4]),attacks,parsed[13],parsed[14])
 
 if __name__ == "__main__":
 	sys.exit(main())
