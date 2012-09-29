@@ -1,6 +1,14 @@
 import time
 import random
 
+import sys
+import time
+sys.path.append('./Classes');
+
+### My Classes ###
+from Types import *	
+
+
 class Pokemon:
 	
 	def __init__(self):
@@ -12,12 +20,16 @@ class Pokemon:
 
 	def __init__(self,name,life,level,attacks,front,back):
 		self.name = name
+		self.maxlife = life
 		self.life = life
 		self.level = level
 		self.attacks = attacks
-		self.maxlife = life
 		self.front = front
 		self.back = back
+		self.attack = 75
+		self.defense = 70
+		self.speed = 66
+		self.type = "grass"
 
 	def __repr__(self):
 		return self.name + " " + str(self.level) + " " + str(self.life)+ " " + str(self.maxlife) + " " + self.front + " " + self.back
@@ -36,8 +48,38 @@ class Pokemon:
 		print self.attacks[0].get() + "\t\t\t\t" + self.attacks[1].get()
 		print self.attacks[2].get() + "\t\t\t\t" + self.attacks[3].get()
 	
-	def hit(self,h):
-		self.life = self.life - h
+	@classmethod
+	def success(cls,p1,p2,att):
+		proba = att.accuracy / 100.0
+		print "Success proba : ", proba
+		if(random.random() < proba):
+			return 1
+		else:
+			return 0
+		
+	@classmethod
+	def critical(cls,p1):
+		proba = float(p1.speed) / 512.0
+		print "Critical proba : ", proba
+		if(random.random() < proba):
+			return 1
+		else:
+			return 0
+
+
+
+	def hit(self,p1,p2,att,success,critical,eff):
+		# Yup. This is the true formula, motherfucker.
+		if(p1.type == att.type):
+			STAB = 1.5
+		else:
+			STAB = 1.0
+		
+		modifier = STAB * eff * success * (1+critical) * (1 - random.random()*0.15)
+		
+		h = ((float(2*p1.level + 10)/250.0) * (float(p1.attack)/float(p2.defense)) * att.strength + 2) * modifier
+		self.life = self.life - int(h)
+		print int(h)
 
 	def disp_front(self):
 		print self.name + " lvl." + str(self.level)
@@ -53,7 +95,6 @@ class Pokemon:
 		print a + self.name + " lvl." + str(self.level)
 		print self.back + a + self.get_life()
 		print ""
-	
 	
 	def get_life(self):
 		a = "["
@@ -86,7 +127,6 @@ class Pokemon:
 				pass
 			return False
 
-
 	def to_socket(self):
 		s = self.name + "\t"  + str(self.maxlife) + "\t" +str(self.level) 
 		for i in range(4):
@@ -99,6 +139,8 @@ class Attack:
 	def __init__(self,name,strength):
 		self.name = name
 		self.strength = strength
+		self.accuracy = 95
+		self.type = "grass"
 
 	def aff(self):
 		print self.get()
