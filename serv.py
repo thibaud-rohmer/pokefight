@@ -14,6 +14,8 @@ host = socket.gethostname() # Get local machine name
 s1.bind((host, 0))        # Bind to the port
 
 
+Types.main()
+
 print 'Server started!'
 print 'Waiting for players...'
 
@@ -30,7 +32,7 @@ while True:
 	print 'Second player : \t', addr2
 
 	# Initialize pokemons
-	P1a1 = Attack("Morsure",20)
+	P1a1 = Attack("Morsure",60)
 	P1a2 = Attack("Griffe",10)
 	P1a3 = Attack("Eclair",25)
 	P1a4 = Attack("Foudre",30)
@@ -38,7 +40,7 @@ while True:
 	P2a1 = Attack("Flash",10)
 	P2a2 = Attack("Flamme",15)
 	P2a3 = Attack("Griffe",10)
-	P2a4 = Attack("Morsure",20)
+	P2a4 = Attack("Morsure",60)
 
 	P1 = Pokemon("Pikachu",100,10,[P1a1,P1a2,P1a3,P1a4],"^_^"," o/")
 	P2 = Pokemon("Salameche",100,30,[P2a1,P2a2,P2a3,P2a4],"*_*"," p/")
@@ -88,10 +90,15 @@ while True:
 			except:
 				pass	
 		att = p1.attacks[int(att_number) - 1]
-	
-		c2.send("ATT\t"+ att.name +"\t")
-		print 'Pokemon utilise : ', att.name
-		p2.hit(att.strength)
+		success 	= 	Pokemon.success(p1,p2,att)
+		critical 	= 	Pokemon.critical(p1)
+		eff 		=	Types.get_eff(p2.type,att.type)
+		
+		c2.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff))
+		c1.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff))
+		
+		print 'Pokemon utilise : ', att.name, ' success : ', success, ' critical :', critical, 'eff :', eff
+		p2.hit(p1,p2,att,success,critical,eff)
 
 		time.sleep(2)
 		if(p2.life <= 0):

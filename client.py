@@ -74,8 +74,46 @@ def main(argv=None):
 
 		if(code == 'ATT'):
 			# Other pokemon attacked
-			print pokemons[1].name + " used : ",parsed[1]
+			att_name = parsed[1]
+			succ = int(parsed[2])
+			crit = int(parsed[3])
+			eff  = float(parsed[4])
 
+			msg = pokemons[0].name + " used : " + att_name + ". "
+			
+			if(succ == 0):
+				msg = msg + "But it failed ! "
+			else:
+				if(crit == 1):
+					msg = msg + "Critical hit ! "
+				if(eff > 1):
+					msg = msg + "It's super effective ! "
+				if(eff < 1):
+					msg = msg + "It's not very effective ... "
+			print msg
+
+
+		if(code == 'HIT'):
+			# Other pokemon attacked
+			att_name = parsed[1]
+			succ = int(parsed[2])
+			crit = int(parsed[3])
+			eff  = float(parsed[4])
+
+			msg = pokemons[1].name + " used : " + att_name + ". "
+			
+			if(succ == 0):
+				msg = msg + "But it failed ! "
+			else:
+				if(crit == 1):
+					msg = msg + "Critical hit ! "
+				if(eff > 1):
+					msg = msg + "It's super effective ! "
+				if(eff < 1):
+					msg = msg + "It's not very effective ... "
+			print msg
+
+			
 		if(code == 'LOSE'):
 			# End, you lose
 			print "You lose."
