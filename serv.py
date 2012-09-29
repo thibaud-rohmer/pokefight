@@ -11,7 +11,20 @@ import socket               # Import socket module
 s1 = socket.socket()         # Create a socket object
 
 host = socket.gethostname() # Get local machine name
-port = 4241              # Reserve a port for your service.
+s1.bind((host, 0))        # Bind to the port
+
+
+print 'Server started!'
+print 'Waiting for players...'
+
+(h,p) = s1.getsockname()
+print 'Port :', p
+s1.listen(5)                 # Now wait for client connection.
+c1, addr1 = s1.accept()     # Establish connection with client.
+print 'Got connection from', addr1
+
+c2, addr2 = s1.accept()     # Establish connection with client.
+print 'Got connection from', addr2
 
 
 
@@ -30,18 +43,6 @@ P1 = Pokemon("Pikachu",100,10,[P1a1,P1a2,P1a3,P1a4],"^_^"," o/")
 P2 = Pokemon("Salameche",100,30,[P2a1,P2a2,P2a3,P2a4],"*_*"," p/")
 
 
-
-
-print 'Server started!'
-print 'Waiting for players...'
-
-s1.bind((host, port))        # Bind to the port
-s1.listen(5)                 # Now wait for client connection.
-c1, addr1 = s1.accept()     # Establish connection with client.
-print 'Got connection from', addr1
-
-c2, addr2 = s1.accept()     # Establish connection with client.
-print 'Got connection from', addr2
 
 
 
