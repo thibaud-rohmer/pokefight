@@ -9,6 +9,25 @@ sys.path.append('./Classes');
 from Types import *	
 
 
+class Attack:
+	
+	def __init__(self,name,type,strength,accuracy):
+		self.name 		= name
+		self.strength 	= strength
+		self.accuracy 	= accuracy
+		self.type 		= type
+
+	def aff(self):
+		print self.get()
+
+	def get(self):
+		return self.name + "\t\t" + str(self.strength)
+		
+	def __repr__(self):
+		attrs = vars(self)
+		return '\n '.join("%s: %s" % item for item in attrs.items())
+
+
 class Pokemon:
 	
 	def __init__(self):
@@ -18,21 +37,20 @@ class Pokemon:
 		self.level = 1
 		self.attacks = []
 
-	def __init__(self,name,life,level,attacks,front,back):
-		self.name = name
-		self.maxlife = life
-		self.life = life
-		self.level = level
-		self.attacks = attacks
-		self.front = front
-		self.back = back
-		self.attack = 75
-		self.defense = 70
-		self.speed = 66
-		self.type = "grass"
+	def __init__(self,name,type,life,attack,defense,speed,level,attacks):
+		self.name 		= 	name
+		self.type		=	type
+		self.life		=	life
+		self.maxlife	=	life
+		self.attack		=	attack
+		self.defense	=	defense
+		self.speed		=	speed
+		self.level		=	level
+		self.attacks	=	attacks
 
 	def __repr__(self):
-		return self.name + " " + str(self.level) + " " + str(self.life)+ " " + str(self.maxlife) + " " + self.front + " " + self.back
+		attrs = vars(self)
+		return ', '.join("%s: %s" % item for item in attrs.items())
 
 	def ask_attak(self):
 		a = "="
@@ -50,7 +68,7 @@ class Pokemon:
 	
 	@classmethod
 	def success(cls,p1,p2,att):
-		proba = att.accuracy / 100.0
+		proba = att.accuracy
 		print "Success proba : ", proba
 		if(random.random() < proba):
 			return 1
@@ -65,8 +83,6 @@ class Pokemon:
 			return 1
 		else:
 			return 0
-
-
 
 	def hit(self,p1,p2,att,success,critical,eff):
 		# Yup. This is the true formula, motherfucker.
@@ -83,7 +99,7 @@ class Pokemon:
 
 	def disp_front(self):
 		print self.name + " lvl." + str(self.level)
-		print self.get_life() + "\t\t\t\t\t" + self.front
+		print self.get_life() + "\t\t\t\t\t" + "*_*"
 		print ""
 		print ""
 		print ""
@@ -93,7 +109,7 @@ class Pokemon:
 		for i in range(5):
 			a = a + "\t"
 		print a + self.name + " lvl." + str(self.level)
-		print self.back + a + self.get_life()
+		print "\o/ " + a + self.get_life()
 		print ""
 	
 	def get_life(self):
@@ -128,65 +144,8 @@ class Pokemon:
 			return False
 
 	def to_socket(self):
-		s = self.name + "\t"  + str(self.maxlife) + "\t" +str(self.level) 
+		s = self.name + "\t"  + str(self.maxlife) + "\t" +str(self.level) + "\t"
 		for i in range(4):
-			s = s + "\t" + self.attacks[i].name + "\t" + str(self.attacks[i].strength)
-		s = s + "\t" + self.front + "\t" + self.back
+			s = s + self.attacks[i].name + "\t" + self.attacks[i].type + "\t" + str(self.attacks[i].strength) + "\t" + str(self.attacks[i].accuracy) + "\t"
 		return s
 
-class Attack:
-	
-	def __init__(self,name,strength):
-		self.name = name
-		self.strength = strength
-		self.accuracy = 95
-		self.type = "grass"
-
-	def aff(self):
-		print self.get()
-
-	def get(self):
-		return self.name + "\t\t" + str(self.strength)
-		
-		
-class Fight:
-	
-	def __init__(self,p1,p2):
-		turn = 0
-		while( p1.life > 0 and p2.life > 0 ):
-			clear()
-			if( turn == 0 ):
-				p2.disp_front()
-				p1.disp_back()
-				at = p1.ask_attak()
-				if(p1.disp_attacking(at)):
-					p2.hit(at.strength)
-			else:
-				p1.disp_front()
-				p2.disp_back()
-				at = p2.ask_attak()
-				if(p2.disp_attacking(at)):
-					p1.hit(at.strength)
-			turn = 1-turn
-
-		if(p1.life == 0):
-			self.winner = p2
-		else:
-			self.winner = p1
-		
-		self.disp_winner()
-
-	def disp_winner(self):
-		clear()
-		for i in range(3):
-			print ""
-		a = "\t"
-		for i in range(2):
-			a = a + "\t"
-		print a + self.winner.name + " wins !"
-		for i in range(5):
-			print ""
-		try:
-			input()
-		except:
-			pass

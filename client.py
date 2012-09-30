@@ -79,7 +79,7 @@ def main(argv=None):
 			crit = int(parsed[3])
 			eff  = float(parsed[4])
 
-			msg = pokemons[0].name + " used : " + att_name + ". "
+			msg = pokemons[1].name + " used : " + att_name + ". "
 			
 			if(succ == 0):
 				msg = msg + "But it failed ! "
@@ -94,13 +94,13 @@ def main(argv=None):
 
 
 		if(code == 'HIT'):
-			# Other pokemon attacked
+			# You got attacked
 			att_name = parsed[1]
 			succ = int(parsed[2])
 			crit = int(parsed[3])
 			eff  = float(parsed[4])
 
-			msg = pokemons[1].name + " used : " + att_name + ". "
+			msg = pokemons[0].name + " used : " + att_name + ". "
 			
 			if(succ == 0):
 				msg = msg + "But it failed ! "
@@ -127,11 +127,18 @@ def main(argv=None):
 		if(code == 'POKE'):
 			# Infos on a pokemon
 			attacks = []
-			attacks.append(Attack(parsed[5],int(parsed[6])))
-			attacks.append(Attack(parsed[7],int(parsed[8])))
-			attacks.append(Attack(parsed[9],int(parsed[10])))
-			attacks.append(Attack(parsed[11],int(parsed[12])))
-			pokemons[int(parsed[1])] = Pokemon(parsed[2],int(parsed[3]),int(parsed[4]),attacks,parsed[13],parsed[14])
+			for i in range(4):
+				attacks.append( 
+								Attack(
+									parsed[(4*i)+5],
+									parsed[(4*i)+6],
+									int(parsed[(4*i)+7]),
+									float(parsed[(4*i)+8])
+									)
+								)
+			
+			
+			pokemons[int(parsed[1])] = Pokemon(parsed[2],"",int(parsed[3]),42,42,42,int(parsed[4]),attacks)
 
 if __name__ == "__main__":
 	sys.exit(main())
