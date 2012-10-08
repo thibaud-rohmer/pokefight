@@ -14144,7 +14144,7 @@
   </pokemon>
   <pokemon id='56'>
     <name>MANKEY</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Vital</ability>
     <exp>1000000</exp>
     <stats>
@@ -14461,7 +14461,7 @@
   </pokemon>
   <pokemon id='57'>
     <name>PRIMEAPE</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Vital</ability>
     <exp>1000000</exp>
     <stats>
@@ -15755,7 +15755,7 @@
   <pokemon id='62'>
     <name>POLIWRATH</name>
     <type>Water</type>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Damp</ability>
     <exp>1059860</exp>
     <stats>
@@ -16939,7 +16939,7 @@
   </pokemon>
   <pokemon id='66'>
     <name>MACHOP</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Guts</ability>
     <exp>1059860</exp>
     <stats>
@@ -17236,7 +17236,7 @@
   </pokemon>
   <pokemon id='67'>
     <name>MACHOKE</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Guts</ability>
     <exp>1059860</exp>
     <stats>
@@ -17501,7 +17501,7 @@
   </pokemon>
   <pokemon id='68'>
     <name>MACHAMP</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Guts</ability>
     <exp>1059860</exp>
     <stats>
@@ -27862,7 +27862,7 @@
   </pokemon>
   <pokemon id='106'>
     <name>HITMONLEE</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Limber</ability>
     <exp>1000000</exp>
     <stats>
@@ -28124,7 +28124,7 @@
   </pokemon>
   <pokemon id='107'>
     <name>HITMONCHAN</name>
-    <type>Fighting</type>
+    <type>Fight</type>
     <ability>Keen</ability>
     <exp>1000000</exp>
     <stats>
@@ -28156,7 +28156,7 @@
     <species>Punching Pokemon</species>
     <height>1.4</height>
     <weight>50.2</weight>
-    <description>The arm-twisting punches it throws pulverize even concrete. It rests after three minutes of fighting.</description>
+    <description>The arm-twisting punches it throws pulverize even concrete. It rests after three minutes of Fight.</description>
     <moves>
       <move type='level-up'>
         <name>Revenge</name>
