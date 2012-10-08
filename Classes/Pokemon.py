@@ -147,5 +147,6 @@ class Pokemon:
 		s = self.name + "\t"  + str(self.maxlife) + "\t" +str(self.level) + "\t"
 		for i in range(4):
 			s = s + self.attacks[i].name + "\t" + self.attacks[i].type + "\t" + str(self.attacks[i].strength) + "\t" + str(self.attacks[i].accuracy) + "\t"
+		s = s + "\n"
 		return s
 
