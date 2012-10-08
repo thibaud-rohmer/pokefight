@@ -44,12 +44,23 @@ class Pokedex:
 		if(attXML == -1):
 			print "Couldn't find attack ",name,", using random."
 			attXML = self.attdex[random.randint(0,len(self.attdex))]
+			name = self.clear_get(attXML,'name')
+
 
 		type 		= 	self.clear_get(attXML,'type')
 		strength	=	self.clear_get(attXML,'power')
 		accuracy	=	self.clear_get(attXML,'accuracy')
-		
-		return Attack(name,type,int(strength),float(accuracy))
+
+		try:
+			t = Types.t[type]
+			if(int(strength) < 5):
+				raise Exception
+			return Attack(name,type,int(strength),float(accuracy))
+
+		except:
+			print "Type unknown : ", type
+			print "or strength too weak : ", strength
+			raise Exception
 		
 	def get_pok(self, id, level):
 		pokXML = self.pokedex[id]
@@ -65,8 +76,19 @@ class Pokedex:
 		
 		print "Looking for attacks for ",name
 		attacks = []
+		potential_attacks = []
 		print "Found ", len(pokXML.getElementsByTagName('move')), " attacks"
-		for i in range(4):
-			attacks.append(self.get_att(self.clear_get(pokXML.getElementsByTagName('move')[i],'name')))
-		
+		for i in range(len(pokXML.getElementsByTagName('move'))):
+			potential_attacks.append(self.clear_get(pokXML.getElementsByTagName('move')[i],'name'))
+
+
+		while(len(attacks) < 4 and len(potential_attacks) > 0 ):
+			try:
+				att = self.get_att(potential_attacks.pop(random.randint(0,len(potential_attacks))))
+				attacks.append(att)
+				i=i+1
+			except:
+				print "fail"
+		while(len(attacks) < 4):
+			attacks.append(self.get_att("void"))
 		return Pokemon(name,type,int(life),int(attack),int(defense),int(speed),int(level),attacks)

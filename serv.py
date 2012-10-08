@@ -35,12 +35,18 @@ while True:
 
 	client_2, addr2 = s1.accept()
 	print 'Second player : \t', addr2
-
-	P1 = pokedex.get_pok(random.randint(0,151),5)
-	P2 = pokedex.get_pok(random.randint(0,151),5)
 	
-	print P1
-	print P2
+	fail = 1
+	while(fail==1):
+		try:
+			P1 = pokedex.get_pok(random.randint(0,151),5)
+			P2 = pokedex.get_pok(random.randint(0,151),5)
+	
+			print P1
+			print P2
+			fail = 0
+		except:
+			fail = 1
 	
 	turn = 0
 

@@ -1214,7 +1214,7 @@ this.use = function(field, user, target, targets) {
 </move>
 
 <move name="Charge" id="54">
-<type>Electric</type>
+<type>Electr</type>
 <class>Other</class>
 <power>0</power>
 <accuracy>0</accuracy>
@@ -1242,7 +1242,7 @@ effect.tick = function() {
 effect.modifier = function(field, user, target, move, critical) {
     if (user != this.subject)
         return null;
-    if (move.type != Type.ELECTRIC)
+    if (move.type != Type.Electr)
         return null;
     // x2 multiplier in base power; priority of 2.
     return [0, 2, 2];
@@ -1255,7 +1255,7 @@ user.applyStatus(user, new StatChangeEffect(Stat.SPDEFENCE, 1));
 </move>
 
 <move name="Charge Beam" id="55">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>50</power>
 <accuracy>0.90</accuracy>
@@ -2029,7 +2029,7 @@ field.print(Text.battle_messages_unique(70, target, move));
 </move>
 
 <move name="Discharge" id="88">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>80</power>
 <accuracy>1.00</accuracy>
@@ -4502,7 +4502,7 @@ var types_ = [
         Type.FIRE,
         Type.WATER,
         Type.GRASS,
-        Type.ELECTRIC,
+        Type.Electr,
         Type.PSYCHIC,
         Type.ICE,
         Type.DRAGON,
@@ -5547,7 +5547,7 @@ makeTemporaryTrappingMove(this, Text.battle_messages_unique.wrap(74));
 </move>
 
 <move name="Magnet Rise" id="230">
-<type>Electric</type>
+<type>Electr</type>
 <class>Other</class>
 <power>0</power>
 <accuracy>0</accuracy>
@@ -6246,7 +6246,7 @@ makeStatusMove(this, [[new StatChangeEffect(Stat.SPEED, -1), 0.1]]);
 </flags>
 <init>
 <![CDATA[
-makeTypeWeakeningMove(this, Type.ELECTRIC);
+makeTypeWeakeningMove(this, Type.Electr);
 ]]>
 </init>
 </move>
@@ -6321,7 +6321,7 @@ user.applyStatus(user, new StatChangeEffect(Stat.SPATTACK, 2));
 var table_ = {
     "Cheri Berry": [Type.FIRE, 60],
     "Chesto Berry": [Type.WATER, 60],
-    "Pecha Berry": [Type.ELECTRIC, 60],
+    "Pecha Berry": [Type.Electr, 60],
     "Rawst Berry": [Type.GRASS, 60],
     "Aspear Berry": [Type.ICE, 60],
     "Leppa Berry": [Type.FIGHTING, 60],
@@ -6337,7 +6337,7 @@ var table_ = {
     "Razz Berry": [Type.STEEL, 60],
     "Bluk Berry": [Type.FIRE, 70],
     "Nanab Berry": [Type.WATER, 70],
-    "Wepear Berry": [Type.ELECTRIC, 70],
+    "Wepear Berry": [Type.Electr, 70],
     "Pinap Berry": [Type.GRASS, 70],
     "Pomeg Berry": [Type.ICE, 70],
     "Kelpsy Berry": [Type.FIGHTING, 70],
@@ -6353,10 +6353,10 @@ var table_ = {
     "Pamtre Berry": [Type.STEEL, 70],
     "Watmel Berry": [Type.FIRE, 80],
     "Durin Berry": [Type.WATER, 80],
-    "Belue Berry": [Type.ELECTRIC, 80],
+    "Belue Berry": [Type.Electr, 80],
     "Occa Berry": [Type.FIRE, 60],
     "Passho Berry": [Type.WATER, 60],
-    "Wacan Berry": [Type.ELECTRIC, 60],
+    "Wacan Berry": [Type.Electr, 60],
     "Rindo Berry": [Type.GRASS, 60],
     "Yache Berry": [Type.ICE, 60],
     "Chople Berry": [Type.FIGHTING, 60],
@@ -8330,7 +8330,7 @@ makeOneHitKillMove(this);
 </move>
 
 <move name="Shock Wave" id="353">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>60</power>
 <accuracy>0</accuracy>
@@ -8869,7 +8869,7 @@ target.hp -= 20;
 </move>
 
 <move name="Spark" id="378">
-<type>Electric</type>
+<type>Electr</type>
 <class>Physical</class>
 <power>65</power>
 <accuracy>1.00</accuracy>
@@ -9897,7 +9897,7 @@ makeRampageMove(this);
 </move>
 
 <move name="Thunder" id="421">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>120</power>
 <accuracy>0.70</accuracy>
@@ -9930,7 +9930,7 @@ this.attemptHit = function(field, user, target) {
 </move>
 
 <move name="Thunder Fang" id="422">
-<type>Electric</type>
+<type>Electr</type>
 <class>Physical</class>
 <power>65</power>
 <accuracy>0.95</accuracy>
@@ -9950,7 +9950,7 @@ makeStatusMove(this, [[FlinchEffect, 0.1], [ParalysisEffect, 0.1]]);
 </move>
 
 <move name="Thunder Wave" id="423">
-<type>Electric</type>
+<type>Electr</type>
 <class>Other</class>
 <power>0</power>
 <accuracy>1.00</accuracy>
@@ -9969,7 +9969,7 @@ makeStatusMove(this, [[ParalysisEffect]], true);
 </move>
 
 <move name="Thunderbolt" id="424">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>95</power>
 <accuracy>1.00</accuracy>
@@ -9987,7 +9987,7 @@ makeStatusMove(this, [[ParalysisEffect, 0.1]]);
 </move>
 
 <move name="ThunderPunch" id="425">
-<type>Electric</type>
+<type>Electr</type>
 <class>Physical</class>
 <power>75</power>
 <accuracy>1.00</accuracy>
@@ -10006,7 +10006,7 @@ makeStatusMove(this, [[ParalysisEffect, 0.1]]);
 </move>
 
 <move name="ThunderShock" id="426">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>40</power>
 <accuracy>1.00</accuracy>
@@ -10503,7 +10503,7 @@ this.prepareSelf = function(field, user) {
 </move>
 
 <move name="Volt Tackle" id="445">
-<type>Electric</type>
+<type>Electr</type>
 <class>Physical</class>
 <power>120</power>
 <accuracy>1.00</accuracy>
@@ -10961,7 +10961,7 @@ field.print(Text.battle_messages_unique(92, target));
 </move>
 
 <move name="Zap Cannon" id="465">
-<type>Electric</type>
+<type>Electr</type>
 <class>Special</class>
 <power>120</power>
 <accuracy>0.50</accuracy>
