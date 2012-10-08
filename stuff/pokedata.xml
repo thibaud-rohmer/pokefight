@@ -5568,7 +5568,7 @@
   </pokemon>
   <pokemon id='25'>
     <name>PIKACHU</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <ability>Static</ability>
     <exp>1000000</exp>
     <stats>
@@ -5597,7 +5597,7 @@
     <species>Mouse Pokemon</species>
     <height>0.4</height>
     <weight>6</weight>
-    <description>It lives in forests with others. It stores electricity in the pouches on its cheeks.</description>
+    <description>It lives in forests with others. It stores Electrity in the pouches on its cheeks.</description>
     <moves>
       <move type='level-up'>
         <name>Thundershock</name>
@@ -5815,7 +5815,7 @@
   </pokemon>
   <pokemon id='26'>
     <name>RAICHU</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <ability>Static</ability>
     <exp>1000000</exp>
     <stats>
@@ -5844,7 +5844,7 @@
     <species>Mouse Pokemon</species>
     <height>0.8</height>
     <weight>30</weight>
-    <description>It turns aggressive if it has too much electricity in its body. It discharges power through its tail.</description>
+    <description>It turns aggressive if it has too much Electrity in its body. It discharges power through its tail.</description>
     <moves>
       <move type='level-up'>
         <name>Thundershock</name>
@@ -20980,7 +20980,7 @@
   </pokemon>
   <pokemon id='81'>
     <name>MAGNEMITE</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <type>Steel</type>
     <ability>Sturdy</ability>
     <exp>1000000</exp>
@@ -21009,7 +21009,7 @@
     <species>Magnet Pokemon</species>
     <height>0.3</height>
     <weight>6</weight>
-    <description>The units at its sides generate electromagnetic waves that keep it airborne. It feeds on electricity.</description>
+    <description>The units at its sides generate electromagnetic waves that keep it airborne. It feeds on Electrity.</description>
     <moves>
       <move type='level-up'>
         <name>Metal Sound</name>
@@ -21220,7 +21220,7 @@
   </pokemon>
   <pokemon id='82'>
     <name>MAGNETON</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <type>Steel</type>
     <ability>Sturdy</ability>
     <exp>1000000</exp>
@@ -26243,7 +26243,7 @@
   </pokemon>
   <pokemon id='100'>
     <name>VOLTORB</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <ability>Static</ability>
     <exp>1000000</exp>
     <stats>
@@ -26464,7 +26464,7 @@
   </pokemon>
   <pokemon id='101'>
     <name>ELECTRODE</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <ability>Static</ability>
     <exp>1000000</exp>
     <stats>
@@ -26488,7 +26488,7 @@
     <species>Ball Pokemon</species>
     <height>1.2</height>
     <weight>66.6</weight>
-    <description>It is known to drift on winds if it is bloated to bursting with stored electricity.</description>
+    <description>It is known to drift on winds if it is bloated to bursting with stored Electrity.</description>
     <moves>
       <move type='level-up'>
         <name>Charge</name>
@@ -33468,7 +33468,7 @@
   </pokemon>
   <pokemon id='125'>
     <name>ELECTABUZZ</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <ability>Static</ability>
     <exp>1000000</exp>
     <stats>
@@ -33493,10 +33493,10 @@
       </evolution>
     </evolutions>
     <egg-group>Human</egg-group>
-    <species>Electric Pokemon</species>
+    <species>Electr Pokemon</species>
     <height>1.1</height>
     <weight>30</weight>
-    <description>Half of all blackouts occur when this Pokemon appears at power plants and eats electricity.</description>
+    <description>Half of all blackouts occur when this Pokemon appears at power plants and eats Electrity.</description>
     <moves>
       <move type='level-up'>
         <name>Quick Attack</name>
@@ -35743,7 +35743,7 @@
   </pokemon>
   <pokemon id='135'>
     <name>JOLTEON</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <ability>Volt</ability>
     <exp>1000000</exp>
     <stats>
@@ -38609,7 +38609,7 @@
   </pokemon>
   <pokemon id='145'>
     <name>ZAPDOS</name>
-    <type>Electric</type>
+    <type>Electr</type>
     <type>Flying</type>
     <ability>Pressure</ability>
     <exp>1250000</exp>
@@ -38626,7 +38626,7 @@
         <name>Zapdos</name>
       </evolution>
     </evolutions>
-    <species>Electric Pokemon</species>
+    <species>Electr Pokemon</species>
     <height>1.6</height>
     <weight>52.6</weight>
     <description>A legendary Pokemon that is said to live in thunderclouds. It freely controls lightning bolts.</description>
