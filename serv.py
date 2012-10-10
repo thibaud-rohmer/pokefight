@@ -77,7 +77,7 @@ class RemoteClient(asyncore.dispatcher):
 						if(int(parsed[1]) > 4):
 							raise Exception
 						f.a2 = int(parsed[1])
-						print "Attacking using ", f.a1
+						print "Attacking using ", f.a2
 					except:
 						f.c2.say("GO\t")
 				
@@ -117,7 +117,7 @@ class RemoteClient(asyncore.dispatcher):
 					f.a2 = -1
 					print f.p1
 					print f.p2
-
+					
 					message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
 					f.c1.say(message)
 					message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
@@ -125,7 +125,22 @@ class RemoteClient(asyncore.dispatcher):
 					
 					f.c1.say("GO\t\n")
 					f.c2.say("GO\t\n")
-					
+			
+			if(code == "WHO"):
+				f = Fights.get_fight(self.socket)
+				if(f.c1.socket == self.socket):
+					f.n1 = parsed[1]
+					f.c2.say("ADV\t"+parsed[1]+"\t\n")
+					message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
+					f.c2.say(message)
+					f.c2.say("GO\t\n")
+				else:
+					f.n2 = parsed[1]
+					f.c1.say("ADV\t"+parsed[1]+"\t\n")
+					message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
+					f.c1.say(message)
+					f.c1.say("GO\t\n")				
+				
 
 	def handle_write(self):
 		if not self.outbox:
@@ -180,13 +195,8 @@ class Host(asyncore.dispatcher):
 		f.c1.say("POKE\t1\t"+message)
 		f.c2.say("POKE\t0\t"+message)
 		
-		message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
-		f.c1.say(message)
-		message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
-		f.c2.say(message)
-		
-		f.c1.say("GO\t\n")
-		f.c2.say("GO\t\n")
+		f.c1.say("WHO\t\n")
+		f.c2.say("WHO\t\n")
 		
 	def handle_read(self):
 		print self.socket

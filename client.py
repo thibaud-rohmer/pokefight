@@ -4,6 +4,7 @@ import logging
 import socket
 import sys
 import getopt
+import time
 sys.path.append('./Classes');
 
 ### My Classes ###
@@ -56,7 +57,14 @@ class Client(asyncore.dispatcher):
 			
 			parsed = message.split("\t")
 			code = parsed[0]
-	
+			if(code == "ADV"):
+				print "You are playing against : "+parsed[1]
+				time.sleep(2)
+
+			if(code == "WHO"):
+				msg = "WHO\t"+str(self.name)+"\t\n"
+				self.send(msg)
+				
 			if(code == "GO"):
 				msg = raw_input("Select Attack [1-4] : ")
 				self.send("ATT\t" + str(msg))
@@ -168,6 +176,7 @@ def main(argv=None):
 
 #	logging.basicConfig(level=logging.INFO)
 	logging.info('Creating client')
+	print "Waiting for another player to join."
 	alice = Client((host,port), name)
 	asyncore.loop()
 	
