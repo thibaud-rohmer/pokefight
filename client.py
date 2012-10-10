@@ -1,4 +1,3 @@
-
 import asyncore
 import collections
 import logging
@@ -61,7 +60,7 @@ class Client(asyncore.dispatcher):
 			if(code == "GO"):
 				msg = raw_input("Select Attack [1-4] : ")
 				self.send("ATT\t" + str(msg))
-				print "Waiting for ",self.pokemons[0].name," to select his attack..."
+				print "Waiting for ",self.pokemons[1].name," to select his attack..."
 				
 			if(code == 'UPD'):
 				# Update lives
