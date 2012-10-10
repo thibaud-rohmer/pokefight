@@ -34,6 +34,7 @@ class Client(asyncore.dispatcher):
 		self.connect(host_address)
 		self.outbox = collections.deque()
 		self.pokemons = [0]*2
+		self.adv = ""
 
 	def say(self, message):
 		self.outbox.append(message)
@@ -59,6 +60,7 @@ class Client(asyncore.dispatcher):
 			code = parsed[0]
 			if(code == "ADV"):
 				print "You are playing against : "+parsed[1]
+				self.adv = parsed[1]
 				time.sleep(2)
 
 			if(code == "WHO"):
@@ -75,6 +77,7 @@ class Client(asyncore.dispatcher):
 				self.pokemons[0].life = int(parsed[1])
 				self.pokemons[1].life = int(parsed[2])
 				clear()
+				print "Playing against : \t", self.adv
 				self.pokemons[1].disp_front()
 				self.pokemons[0].disp_back()
 				self.pokemons[0].disp_attak()
