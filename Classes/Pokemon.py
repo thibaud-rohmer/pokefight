@@ -101,7 +101,7 @@ class Pokemon:
 	def disp_front(self):
 		print self.name + " lvl." + str(self.level)
 		if(Pokemon.boobs):
-			print self.get_life() + "\t\t\t\t\t" + "(_,_)"
+			print self.get_life() + "\t\t\t\t\t" + "(o Y o)"
 		else:
 			print self.get_life() + "\t\t\t\t\t" + "*_*"
 		print ""
@@ -114,7 +114,7 @@ class Pokemon:
 			a = a + "\t"
 		print a + self.name + " lvl." + str(self.level)
 		if(Pokemon.boobs):
-			print "(o Y o) " + a + self.get_life()
+			print "(_,_) " + a + self.get_life()
 		else:
 			print "\o/ " + a + self.get_life()
 		print ""
