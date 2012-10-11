@@ -23,6 +23,7 @@ class Usage(Exception):
 class Fight():
 	
 	pokedex = -1
+	choices = 3
 	
 	def __init__(self,p1,p2,c1,c2):
 		self.p1 = p1
@@ -173,7 +174,7 @@ class RemoteClient(asyncore.dispatcher):
 				self.informed = True
 				print "informed"
 				if(f.c1.informed and f.c2.informed):
-					self.informchoices(f,3)	
+					self.informchoices(f,Fight.choices)	
 			
 	def informfight(self,f):
 		message = f.p1.to_socket()
@@ -200,6 +201,9 @@ class RemoteClient(asyncore.dispatcher):
 				while(fail==1):
 					try:
 						P1 = Fight.pokedex.get_pok(random.randint(0,151),5)
+						for k in p.av_pok:
+							if(P1.name == k.name):
+								raise Exception
 						fail = 0
 					except:
 						fail = 1
@@ -272,7 +276,7 @@ def main(argv=None):
 		argv = sys.argv
 	try:
 		try:
-			opts, args = getopt.getopt(argv[1:], "s:p:d",[])
+			opts, args = getopt.getopt(argv[1:], "s:p:c:d",[])
 		except getopt.error, msg:
 			raise Usage(msg)
 			
@@ -282,6 +286,8 @@ def main(argv=None):
 				server = value
 			if option == "-p":
 				port = int(value)
+			if option == "-c":
+				Fight.choices = int(value)
 			if option == "-d":
 				logging.basicConfig(level=logging.INFO)
 	except Usage, err:

@@ -24,7 +24,6 @@ class Usage(Exception):
 		self.msg = msg
 
 class Client(asyncore.dispatcher):
-
 	def __init__(self, host_address, name):
 		asyncore.dispatcher.__init__(self)
 		self.log = logging.getLogger('Client (%7s)' % name)
