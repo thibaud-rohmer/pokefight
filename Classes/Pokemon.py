@@ -29,6 +29,7 @@ class Attack:
 
 
 class Pokemon:
+	boobs = False
 	
 	def __init__(self):
 		self.name = ""
@@ -99,7 +100,10 @@ class Pokemon:
 
 	def disp_front(self):
 		print self.name + " lvl." + str(self.level)
-		print self.get_life() + "\t\t\t\t\t" + "*_*"
+		if(Pokemon.boobs):
+			print self.get_life() + "\t\t\t\t\t" + "(_,_)"
+		else:
+			print self.get_life() + "\t\t\t\t\t" + "*_*"
 		print ""
 		print ""
 		print ""
@@ -109,7 +113,10 @@ class Pokemon:
 		for i in range(5):
 			a = a + "\t"
 		print a + self.name + " lvl." + str(self.level)
-		print "\o/ " + a + self.get_life()
+		if(Pokemon.boobs):
+			print "(o Y o) " + a + self.get_life()
+		else:
+			print "\o/ " + a + self.get_life()
 		print ""
 	
 	def get_life(self):
