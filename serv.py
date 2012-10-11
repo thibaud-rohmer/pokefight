@@ -17,6 +17,8 @@ MAX_MESSAGE_LENGTH = 1024
 
 class Fight():
 	
+	pokedex = -1
+	
 	def __init__(self,p1,p2,c1,c2):
 		self.p1 = p1
 		self.p2 = p2
@@ -44,10 +46,12 @@ class RemoteClient(asyncore.dispatcher):
 		self.host = host
 		self.outbox = collections.deque()
 		self.socket = socket
+		self.av_pok = []
+		self.informed = False
 
 	def say(self, message):
 		self.outbox.append(message)
-
+		
 	def handle_read(self):
 		client_message = self.recv(MAX_MESSAGE_LENGTH)
 		print "message received : ",client_message
@@ -62,19 +66,40 @@ class RemoteClient(asyncore.dispatcher):
 			else:
 				pos = 2
 				
+			if(code=="CHOSEN"):
+				if(pos==1):
+					if(f.a1 == -1):
+						try:
+							if(int(parsed[1]) > len(self.av_pok) or int(parsed[1]) < 1):
+								raise Exception
+							f.p1 = self.av_pok[int(parsed[1]) - 1]
+							print "Number 1 selected ", f.p1.name
+						except:
+							f.c1.say("CHOOSE\t")
+				else:
+					try:
+						if(int(parsed[1]) > len(self.av_pok) or int(parsed[1]) < 1):
+							raise Exception
+						f.p2 = self.av_pok[int(parsed[1]) - 1]
+						print "Number 2 selected ", f.p2.name
+					except:
+						f.c2.say("CHOOSE\t")
+				if(f.p1 != -1 and f.p2 != -1):
+					self.informfight(f)
+
 			if(code=="ATT"):
 				if(pos==1):
 					if(f.a1 == -1):
 						try:
-							if(int(parsed[1]) > 4):
+							if(int(parsed[1]) > 4 or int(parsed[1]) < 1):
 								raise Exception
-							f.a1 = int(parsed[1])
+							f.a1 = int(parsed[1]) 
 							print "Attacking using ", f.a1
 						except:
 							f.c1.say("GO\t")
 				else:
 					try:
-						if(int(parsed[1]) > 4):
+						if(int(parsed[1]) > 4 or int(parsed[1]) < 1):
 							raise Exception
 						f.a2 = int(parsed[1])
 						print "Attacking using ", f.a2
@@ -131,17 +156,61 @@ class RemoteClient(asyncore.dispatcher):
 				if(f.c1.socket == self.socket):
 					f.n1 = parsed[1]
 					f.c2.say("ADV\t"+parsed[1]+"\t\n")
-					message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
-					f.c2.say(message)
-					f.c2.say("GO\t\n")
+					# message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
+					# f.c2.say(message)
+					# f.c2.say("GO\t\n")
 				else:
 					f.n2 = parsed[1]
 					f.c1.say("ADV\t"+parsed[1]+"\t\n")
-					message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
-					f.c1.say(message)
-					f.c1.say("GO\t\n")				
-				
+					# message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
+					# f.c1.say(message)
+					# f.c1.say("GO\t\n")
+				self.informed = True
+				print "informed"
+				if(f.c1.informed and f.c2.informed):
+					self.informchoices(f,3)	
+			
+	def informfight(self,f):
+		message = f.p1.to_socket()
+		f.c1.say("POKE\t0\t" + message)
+		f.c2.say("POKE\t1\t" + message)
+	
+		message = f.p2.to_socket()
+		f.c1.say("POKE\t1\t"+message)
+		f.c2.say("POKE\t0\t"+message)
 
+		message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
+		f.c1.say(message)
+		message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
+		f.c2.say(message)
+			
+		f.c1.say("GO\t\n")
+		f.c2.say("GO\t\n")
+	
+
+	def informchoices(self,f,number):
+		for p in [f.c1,f.c2]:
+			for i in range(number):
+				fail = 1
+				while(fail==1):
+					try:
+						P1 = Fight.pokedex.get_pok(random.randint(0,151),5)
+						fail = 0
+					except:
+						fail = 1
+				p.av_pok.append(P1)
+				
+		for p in f.c1.av_pok:
+			f.c1.say("AV\t" + p.to_socket() + "\t\n")
+			f.c2.say("ADVAV\t" + p.to_socket() + "\t\n")
+		
+		for p in f.c2.av_pok:
+			f.c2.say("AV\t" + p.to_socket() + "\t\n")
+			f.c1.say("ADVAV\t" + p.to_socket() + "\t\n")
+			
+		f.c1.say("CHOOSE\t\n")
+		f.c2.say("CHOOSE\t\n")
+				
 	def handle_write(self):
 		if not self.outbox:
 			return
@@ -154,7 +223,7 @@ class RemoteClient(asyncore.dispatcher):
 class Host(asyncore.dispatcher):
 
 	log = logging.getLogger('Host')
-
+	
 	def __init__(self, address=('localhost', 0)):
 		asyncore.dispatcher.__init__(self)
 		self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -163,7 +232,7 @@ class Host(asyncore.dispatcher):
 		self.remote_clients = []
 		self.fighters = []
 		self.fights = []
-		self.pokedex = Pokedex()
+		Fight.pokedex = Pokedex()
 		Types.main()
 
 	def handle_accept(self):
@@ -172,31 +241,20 @@ class Host(asyncore.dispatcher):
 		self.remote_clients.append(RemoteClient(self, socket, addr))
 		self.fighters.append(self.remote_clients[-1])
 		if(len(self.fighters) == 2):
-			fail = 1
-			while(fail==1):
-				try:
-					P1 = self.pokedex.get_pok(random.randint(0,151),5)
-					P2 = self.pokedex.get_pok(random.randint(0,151),5)
-					fail = 0
-				except:
-					fail = 1
-			f=Fight(P1,P2,self.fighters[0],self.fighters[1])
+			# fail = 1
+			# while(fail==1):
+			# 	try:
+			# 		P1 = self.pokedex.get_pok(random.randint(0,151),5)
+			# 		P2 = self.pokedex.get_pok(random.randint(0,151),5)
+			# 		fail = 0
+			# 	except:
+			# 		fail = 1
+			f=Fight(-1,-1,self.fighters[0],self.fighters[1])
 			Fights.fights.append(f)
 			self.fighters = []
 			f=Fights.get_fight(socket)
-			self.informfight(f)
-
-	def informfight(self,f):
-		message = f.p1.to_socket()
-		f.c1.say("POKE\t0\t" + message)
-		f.c2.say("POKE\t1\t" + message)
-		
-		message = f.p2.to_socket()
-		f.c1.say("POKE\t1\t"+message)
-		f.c2.say("POKE\t0\t"+message)
-		
-		f.c1.say("WHO\t\n")
-		f.c2.say("WHO\t\n")
+			f.c1.say("WHO\t\n")
+			f.c2.say("WHO\t\n")
 		
 	def handle_read(self):
 		print self.socket

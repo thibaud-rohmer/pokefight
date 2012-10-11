@@ -35,6 +35,8 @@ class Client(asyncore.dispatcher):
 		self.outbox = collections.deque()
 		self.pokemons = [0]*2
 		self.adv = ""
+		self.AV = []
+		self.ADVAV = []
 
 	def say(self, message):
 		self.outbox.append(message)
@@ -137,6 +139,19 @@ class Client(asyncore.dispatcher):
 				print "You win."
 				exit(0)
 			
+			if(code == 'AV'):
+				self.AV.append(parsed[1])
+			
+			if(code == 'ADVAV'):
+				self.ADVAV.append(parsed[1])
+				
+			if(code == 'CHOOSE'):
+				print "Your opponent can choose among : \t",self.ADVAV
+				print "You may choose among : \t",self.AV
+				msg = raw_input("Select Pokemon [1-"+str(len(self.AV))+"] : ")
+				self.send("CHOSEN\t" + str(msg))
+				print "Waiting for opponent to select his pokemon..."
+				
 			if(code == 'POKE'):
 				# Infos on a pokemon
 				attacks = []
