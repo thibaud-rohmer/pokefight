@@ -4,6 +4,7 @@ import logging
 import socket
 import time
 import sys
+import getopt
 import random
 sys.path.append('./Classes');
 
@@ -14,6 +15,10 @@ from Pokedex import *
 
 MAX_MESSAGE_LENGTH = 1024
 
+
+class Usage(Exception):
+	def __init__(self, msg):
+		self.msg = msg
 
 class Fight():
 	
@@ -241,14 +246,6 @@ class Host(asyncore.dispatcher):
 		self.remote_clients.append(RemoteClient(self, socket, addr))
 		self.fighters.append(self.remote_clients[-1])
 		if(len(self.fighters) == 2):
-			# fail = 1
-			# while(fail==1):
-			# 	try:
-			# 		P1 = self.pokedex.get_pok(random.randint(0,151),5)
-			# 		P2 = self.pokedex.get_pok(random.randint(0,151),5)
-			# 		fail = 0
-			# 	except:
-			# 		fail = 1
 			f=Fight(-1,-1,self.fighters[0],self.fighters[1])
 			Fights.fights.append(f)
 			self.fighters = []
@@ -266,10 +263,43 @@ class Host(asyncore.dispatcher):
 			remote_client.say(message)
 
 
-if __name__ == '__main__':
+def main(argv=None):
+	
+	server = "localhost"
+	port = 0
+	
+	if argv is None:
+		argv = sys.argv
+	try:
+		try:
+			opts, args = getopt.getopt(argv[1:], "s:p:d",[])
+		except getopt.error, msg:
+			raise Usage(msg)
+			
+		# option processing
+		for option, value in opts:
+			if option == "-s":
+				server = value
+			if option == "-p":
+				port = int(value)
+			if option == "-d":
+				logging.basicConfig(level=logging.INFO)
+	except Usage, err:
+		print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
+		print >> sys.stderr, "\t for help use --help"
+		exit(0)
+		
+	
 #	logging.basicConfig(level=logging.INFO)
 	logging.info('Creating host')
-	host = Host()
+	host = Host((server,port))
 	(h,p) = host.getsockname()
-	print ("Host : ",h," Port : ",p)
+	print "Host : ",h," Port : ",p
+	print "To connect, type : "
+	print "python client.py -s ",h," -p ",p," -n NICK"
 	asyncore.loop()
+	
+	
+	
+if __name__ == '__main__':
+	sys.exit(main())
