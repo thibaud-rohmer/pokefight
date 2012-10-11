@@ -34,7 +34,7 @@ class Pokedex:
 	def clear_get(self,pokXML,val):
 		return pokXML.getElementsByTagName(val)[0].toxml().replace('<'+val+'>','').replace('</'+val+'>','')
 		
-	def get_att(self, name):
+	def get_att(self, name, attacks):
 		attXML = -1
 		for att in self.attdex:
 			if(att.getAttribute("name") == name):
@@ -55,6 +55,9 @@ class Pokedex:
 			t = Types.t[type]
 			if(int(strength) < 5):
 				raise Exception
+			for a in attacks:
+				if(a.name == name):
+					raise Exception
 			return Attack(name,type,int(strength),float(accuracy))
 
 		except:
@@ -79,12 +82,13 @@ class Pokedex:
 		potential_attacks = []
 		print "Found ", len(pokXML.getElementsByTagName('move')), " attacks"
 		for i in range(len(pokXML.getElementsByTagName('move'))):
-			potential_attacks.append(self.clear_get(pokXML.getElementsByTagName('move')[i],'name'))
+			if(pokXML.getElementsByTagName('move')[i].getAttribute("type") == 'level-up'):
+				potential_attacks.append(self.clear_get(pokXML.getElementsByTagName('move')[i],'name'))
 
-
+		print potential_attacks
 		while(len(attacks) < 4 and len(potential_attacks) > 0 ):
 			try:
-				att = self.get_att(potential_attacks.pop(random.randint(0,len(potential_attacks))))
+				att = self.get_att(potential_attacks.pop(random.randint(0,len(potential_attacks))),attacks)
 				attacks.append(att)
 				i=i+1
 			except:
