@@ -48,6 +48,9 @@ class Client(asyncore.dispatcher):
 			raise ValueError('Message too long')
 		self.send(message)
 
+	def handle_connect(self):
+		pass
+		
 	def handle_read(self):
 		messages = self.recv(MAX_MESSAGE_LENGTH)
 		self.log.info("Message Received : %s",messages)
