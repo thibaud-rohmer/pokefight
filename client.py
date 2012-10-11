@@ -178,7 +178,7 @@ def main(argv=None):
 		argv = sys.argv
 	try:
 		try:
-			opts, args = getopt.getopt(argv[1:], "s:p:n:b",[])
+			opts, args = getopt.getopt(argv[1:], "s:p:n:bd",[])
 		except getopt.error, msg:
 			raise Usage(msg)
 			
