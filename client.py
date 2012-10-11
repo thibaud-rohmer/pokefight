@@ -192,6 +192,8 @@ def main(argv=None):
 				name = value
 			if option == "-b":
 				Pokemon.boobs = True
+			if option == "-d":
+				logging.basicConfig(level=logging.INFO)
 	except Usage, err:
 		print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
 		print >> sys.stderr, "\t for help use --help"
