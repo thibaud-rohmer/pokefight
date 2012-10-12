@@ -8,6 +8,38 @@ sys.path.append('./Classes');
 ### My Classes ###
 from Types import *	
 
+class TypeColor():
+	color_print = False
+	color = { 
+			"Normal": 	'\033[1m' ,
+			"Grass":  	'\033[42m' ,
+			"Electr": 	'\033[93m' ,
+			"Water": 	'\033[94m' ,
+			"Psychic": 	'\033[95m' ,
+			"Ice":   	'\033[96m' ,
+			"Bug":    	'\033[97m' ,
+			"Ghost":  	'\033[47m\033[30m\033[3m' ,
+			"Fire":   	'\033[31m' ,
+			"Rock":  	'\033[43m\033[1m\033[34m' ,
+			"Fight":  	'\033[1m\033[4m' ,
+			"Flying": 	'' ,
+			"Ground":	'\033[43m\033[1m' ,
+			"Poison":   '\033[45m\033[36m\033[1m' ,
+			"Dragon": 	'\033[41m\033[1m' ,
+		}
+		
+	@classmethod
+	def getcol(cls,t):
+		try:
+			if(TypeColor.color_print):
+				return TypeColor.color[t]
+		except:
+			pass
+		return ''
+	
+	@classmethod
+	def clear(cls):
+		return '\033[0m'
 
 class Attack:
 	
@@ -21,7 +53,7 @@ class Attack:
 		print self.get()
 
 	def get(self):
-		return self.name + "\t\t" + str(self.strength)
+		return TypeColor.getcol(self.type) + self.name + " - " + str(self.type) + TypeColor.clear()
 		
 	def __repr__(self):
 		attrs = vars(self)
@@ -64,8 +96,8 @@ class Pokemon:
 		return at;
 
 	def disp_attak(self):
-		print self.attacks[0].get() + "\t\t\t\t" + self.attacks[1].get()
-		print self.attacks[2].get() + "\t\t\t\t" + self.attacks[3].get()
+		print "1.",self.attacks[0].get(),"\t\t\t\t","2.",self.attacks[1].get()
+		print "3.",self.attacks[2].get(),"\t\t\t\t","4.",self.attacks[3].get()
 	
 	@classmethod
 	def success(cls,p1,p2,att):
@@ -99,7 +131,7 @@ class Pokemon:
 		print int(h)
 
 	def disp_front(self):
-		print self.name + " lvl." + str(self.level)
+		print  TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear()
 		if(Pokemon.boobs):
 			print self.get_life() + "\t\t\t\t\t" + "(o Y o)"
 		else:
@@ -112,7 +144,7 @@ class Pokemon:
 		a = "\t"
 		for i in range(5):
 			a = a + "\t"
-		print a + self.name + " lvl." + str(self.level)
+		print a + TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear()
 		if(Pokemon.boobs):
 			print "(_,_) " + a + self.get_life()
 		else:
@@ -151,7 +183,7 @@ class Pokemon:
 			return False
 
 	def to_socket(self):
-		s = self.name + "\t"  + str(self.maxlife) + "\t" +str(self.level) + "\t"
+		s = self.name + "\t"  + self.type + "\t" + str(self.maxlife) + "\t" +str(self.level) + "\t"
 		for i in range(4):
 			s = s + self.attacks[i].name + "\t" + self.attacks[i].type + "\t" + str(self.attacks[i].strength) + "\t" + str(self.attacks[i].accuracy) + "\t"
 		s = s + "\n"

@@ -6,7 +6,6 @@ sys.path.append('./Classes');
 ### My Classes ###
 from Pokemon import *
 
-
 class Pokedex:
 	pokedex = 0
 	attdex = 0

@@ -299,4 +299,3 @@ class Types:
 		print p_type
 		print at_type
 		return Types.t[p_type][at_type]
-	

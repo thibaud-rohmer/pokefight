@@ -23,8 +23,11 @@ class Usage(Exception):
 	def __init__(self, msg):
 		self.msg = msg
 
+
+
 class Client(asyncore.dispatcher):
 	def __init__(self, host_address, name):
+		
 		asyncore.dispatcher.__init__(self)
 		self.log = logging.getLogger('Client (%7s)' % name)
 		self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -157,13 +160,13 @@ class Client(asyncore.dispatcher):
 				for i in range(4):
 					attacks.append( 
 									Attack(
-										parsed[(4*i)+5],
 										parsed[(4*i)+6],
-										int(parsed[(4*i)+7]),
-										float(parsed[(4*i)+8])
+										parsed[(4*i)+7],
+										int(parsed[(4*i)+8]),
+										float(parsed[(4*i)+9])
 										)
 									)
-				self.pokemons[int(parsed[1])] = Pokemon(parsed[2],"",int(parsed[3]),42,42,42,int(parsed[4]),attacks)
+				self.pokemons[int(parsed[1])] = Pokemon(parsed[2],parsed[3],int(parsed[4]),42,42,42,int(parsed[5]),attacks)
 
 
 def main(argv=None):
@@ -177,7 +180,7 @@ def main(argv=None):
 		argv = sys.argv
 	try:
 		try:
-			opts, args = getopt.getopt(argv[1:], "s:p:n:bd",[])
+			opts, args = getopt.getopt(argv[1:], "s:p:n:bdc",[])
 		except getopt.error, msg:
 			raise Usage(msg)
 			
@@ -193,6 +196,8 @@ def main(argv=None):
 				Pokemon.boobs = True
 			if option == "-d":
 				logging.basicConfig(level=logging.INFO)
+			if option == "-c":
+				TypeColor.color_print = True
 	except Usage, err:
 		print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
 		print >> sys.stderr, "\t for help use --help"
