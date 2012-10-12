@@ -142,14 +142,20 @@ class Client(asyncore.dispatcher):
 				exit(0)
 			
 			if(code == 'AV'):
-				self.AV.append(parsed[1])
+				self.AV.append([parsed[1],parsed[2]])
 			
 			if(code == 'ADVAV'):
-				self.ADVAV.append(parsed[1])
+				self.ADVAV.append([parsed[1],parsed[2]])
 				
 			if(code == 'CHOOSE'):
-				print "Your opponent can choose among : \t",self.ADVAV
-				print "You may choose among : \t",self.AV
+				print "Your opponent can choose among :"
+				for i in range(len(self.ADVAV)):
+					pika = self.ADVAV[i]
+					print "\t",str(i+1),". ",TypeColor.getcol(pika[1]),pika[0]," - ",pika[1],TypeColor.clear()
+				print "You may choose among :"
+				for i in range(len(self.AV)):
+					pika = self.AV[i]
+					print "\t",str(i+1),". ",TypeColor.getcol(pika[1]),pika[0]," - ",pika[1],TypeColor.clear()
 				msg = raw_input("Select Pokemon [1-"+str(len(self.AV))+"] : ")
 				self.send("CHOSEN\t" + str(msg))
 				print "Waiting for opponent to select his pokemon..."
