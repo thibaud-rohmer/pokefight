@@ -112,7 +112,6 @@ class RemoteClient(asyncore.dispatcher):
 					except:
 						f.c2.say("GO\t")
 				
-				print f.a1,f.a2
 				if(f.a1 != -1 and f.a2 != -1):
 					# Attacks
 
@@ -122,9 +121,13 @@ class RemoteClient(asyncore.dispatcher):
 					critical 	= 	Pokemon.critical(f.p1)
 					eff 		=	Types.get_eff(f.p2.type,att.type)
 					f.p2.hit(f.p1,f.p2,att,success,critical,eff)
-					f.c2.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff))
-					f.c1.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff))
+					f.c2.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
+					f.c1.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
 
+					if(f.p2.apply_effect(att)):
+						f.c2.send("HIE\t"+f.p2.affected+"\t\n")
+						f.c1.send("ATE\t"+f.p2.affected+"\t\n")
+					
 					time.sleep(2)
 										
 					if(f.p2.life <= 0):
@@ -135,9 +138,14 @@ class RemoteClient(asyncore.dispatcher):
 					success 	= 	Pokemon.success(f.p2,f.p1,att)
 					critical 	= 	Pokemon.critical(f.p2)
 					eff 		=	Types.get_eff(f.p1.type,att.type)
-					f.p1.hit(f.p2,f.p1,att,success,critical,eff)
-					f.c1.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff))
-					f.c2.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff))
+					f.p1.hit(f.p2,f.p1,att,success,critical,eff)					
+					f.c1.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
+					f.c2.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
+					
+					if(f.p1.apply_effect(att)):
+						f.c2.send("ATE\t"+f.p1.affected+"\t\n")
+						f.c1.send("HIE\t"+f.p1.affected+"\t\n")
+					
 					time.sleep(2)
 
 					if(f.p1.life <= 0):
@@ -162,17 +170,11 @@ class RemoteClient(asyncore.dispatcher):
 				if(f.c1.socket == self.socket):
 					f.n1 = parsed[1]
 					f.c2.say("ADV\t"+parsed[1]+"\t\n")
-					# message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
-					# f.c2.say(message)
-					# f.c2.say("GO\t\n")
 				else:
 					f.n2 = parsed[1]
 					f.c1.say("ADV\t"+parsed[1]+"\t\n")
-					# message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
-					# f.c1.say(message)
-					# f.c1.say("GO\t\n")
+
 				self.informed = True
-				print "informed"
 				if(f.c1.informed and f.c2.informed):
 					self.informchoices(f,Fight.choices)	
 			
@@ -268,7 +270,6 @@ class Host(asyncore.dispatcher):
 
 
 def main(argv=None):
-	
 	server = "localhost"
 	port = 0
 	

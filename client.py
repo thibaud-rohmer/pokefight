@@ -75,6 +75,11 @@ class Client(asyncore.dispatcher):
 				self.send(msg)
 				
 			if(code == "GO"):
+				clear()
+				print "Playing against : \t", self.adv
+				self.pokemons[1].disp_front()
+				self.pokemons[0].disp_back()
+				self.pokemons[0].disp_attak()
 				msg = raw_input("Select Attack [1-4] : ")
 				self.send("ATT\t" + str(msg))
 				print "Waiting for ",self.pokemons[1].name," to select his attack..."
@@ -83,11 +88,6 @@ class Client(asyncore.dispatcher):
 				# Update lives
 				self.pokemons[0].life = int(parsed[1])
 				self.pokemons[1].life = int(parsed[2])
-				clear()
-				print "Playing against : \t", self.adv
-				self.pokemons[1].disp_front()
-				self.pokemons[0].disp_back()
-				self.pokemons[0].disp_attak()
 
 			if(code == 'ATT'):
 				# Other pokemon attacked
@@ -109,6 +109,15 @@ class Client(asyncore.dispatcher):
 						msg = msg + "It's not very effective ... "
 				print msg
 
+			if(code == 'HIE'):
+				self.pokemons[0].affected = parsed[1]
+				print self.pokemons[0].name, " is ", self.pokemons[0].affected, " !"
+				time.sleep(2)
+
+			if(code == 'ATE'):
+				self.pokemons[1].affected = parsed[1]
+				print self.pokemons[1].name, " is ", self.pokemons[1].affected, " !"
+				time.sleep(2)
 
 			if(code == 'HIT'):
 				# You got attacked

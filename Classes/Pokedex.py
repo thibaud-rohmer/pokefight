@@ -16,9 +16,7 @@ class Pokedex:
 		data = file.read()
 		file.close()
 
-		#parse the xml
 		self.pokedex = parseString(data).getElementsByTagName('pokemon')
-		
 		file = open('stuff/attdata.xml',"r")
 		data = file.read()
 		file.close()
@@ -31,9 +29,12 @@ class Pokedex:
 		self.poke_fr = data
 	
 	def clear_get(self,pokXML,val):
-		return pokXML.getElementsByTagName(val)[0].toxml().replace('<'+val+'>','').replace('</'+val+'>','')
-		
-	def get_att(self, name, attacks):
+		try:
+			return pokXML.getElementsByTagName(val)[0].toxml().replace('<'+val+'>','').replace('</'+val+'>','')
+		except:
+			return ""
+
+	def get_att(self, name, attacks=[]):
 		attXML = -1
 		for att in self.attdex:
 			if(att.getAttribute("name") == name):
@@ -49,7 +50,10 @@ class Pokedex:
 		type 		= 	self.clear_get(attXML,'type')
 		strength	=	self.clear_get(attXML,'power')
 		accuracy	=	self.clear_get(attXML,'accuracy')
-
+		target 		=	self.clear_get(attXML,'target')
+		use 		=	self.clear_get(attXML,'use')
+		init 		=	self.clear_get(attXML,'init')
+		
 		try:
 			t = Types.t[type]
 			if(int(strength) < 5):
@@ -57,14 +61,14 @@ class Pokedex:
 			for a in attacks:
 				if(a.name == name):
 					raise Exception
-			return Attack(name,type,int(strength),float(accuracy))
+			return Attack(name,type,int(strength),float(accuracy),target,use,init)
 
 		except:
 			print "Type unknown : ", type
 			print "or strength too weak : ", strength
 			raise Exception
 		
-	def get_pok(self, id, level):
+	def get_pok(self, id, level=5):
 		pokXML = self.pokedex[id]
 		
 		
@@ -93,5 +97,8 @@ class Pokedex:
 			except:
 				print "fail"
 		while(len(attacks) < 4):
-			attacks.append(self.get_att("void"))
+			try:
+				attacks.append(self.get_att("void"))
+			except:
+				pass
 		return Pokemon(name,type,int(life),int(attack),int(defense),int(speed),int(level),attacks)

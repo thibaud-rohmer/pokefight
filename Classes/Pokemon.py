@@ -41,14 +41,38 @@ class TypeColor():
 	def clear(cls):
 		return '\033[0m'
 
+
+class Effects:
+	effects = {
+		"ParalysisEffect"	:	"Paralysed",
+		"SleepEffect"		:	"Sleeping",
+		"PoisonEffect"		:	"Poisoned",
+		"BurnEffect"		:	"Burning",
+		"FreezeEffect"		:	"Frozen",
+		"ConfusionEffect"	:	"Confused"
+	}
+	
 class Attack:
 	
-	def __init__(self,name,type,strength,accuracy):
+	def __init__(self,name,type,strength,accuracy,target="Ennemies",use="",init=""):
 		self.name 		= name
 		self.strength 	= strength
 		self.accuracy 	= accuracy
 		self.type 		= type
-
+		self.target		= target
+		self.use		= use
+		self.init		= init
+		self.effect		= ""
+		self.effect_proba = 1
+		try:
+			todo = self.init.split("\n")[2].split("[")[2].split("]")[0].split(",")
+			print todo
+			self.effect = Effects.effects[todo[0]]
+			#self.effect = todo[0]
+			self.effect_proba = todo[1]
+		except:
+			pass
+			
 	def aff(self):
 		print self.get()
 
@@ -58,17 +82,17 @@ class Attack:
 	def __repr__(self):
 		attrs = vars(self)
 		return '\n '.join("%s: %s" % item for item in attrs.items())
-
-
+		
 class Pokemon:
 	boobs = False
 	
 	def __init__(self):
-		self.name = ""
-		self.life = 10
-		self.maxlife = 10
-		self.level = 1
-		self.attacks = []
+		self.name 		= 	""
+		self.life 		= 	10
+		self.maxlife 	=	10
+		self.level 		= 	1
+		self.attacks 	= 	[]
+		self.affected 	= 	""
 
 	def __init__(self,name,type,life,attack,defense,speed,level,attacks):
 		self.name 		= 	name
@@ -80,6 +104,7 @@ class Pokemon:
 		self.speed		=	speed
 		self.level		=	level
 		self.attacks	=	attacks
+		self.affected 	= 	""		
 
 	def __repr__(self):
 		attrs = vars(self)
@@ -130,8 +155,15 @@ class Pokemon:
 		self.life = self.life - int(h)
 		print int(h)
 
+	def apply_effect(self,at):
+		if(random.random() < at.effect_proba):
+			self.affected = at.effect
+			if(self.affected != ''):
+				return True		
+		return False
+	
 	def disp_front(self):
-		print  TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear()
+		print  TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear() + " " + self.affected
 		if(Pokemon.boobs):
 			print self.get_life() + "\t\t\t\t\t" + "(o Y o)"
 		else:
@@ -144,7 +176,7 @@ class Pokemon:
 		a = "\t"
 		for i in range(5):
 			a = a + "\t"
-		print a + TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear()
+		print a + TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear() + " " + self.affected
 		if(Pokemon.boobs):
 			print "(_,_) " + a + self.get_life()
 		else:
