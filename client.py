@@ -27,7 +27,6 @@ class Usage(Exception):
 
 class Client(asyncore.dispatcher):
 	def __init__(self, host_address, name):
-		
 		asyncore.dispatcher.__init__(self)
 		self.log = logging.getLogger('Client (%7s)' % name)
 		self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,6 +54,13 @@ class Client(asyncore.dispatcher):
 	def handle_connect(self):
 		pass
 		
+	def printscreen(self):
+		clear()
+		print "Playing against : \t", self.adv
+		self.pokemons[1].disp_front()
+		self.pokemons[0].disp_back()
+		print "================================================================================"
+		
 	def handle_read(self):
 		messages = self.recv(MAX_MESSAGE_LENGTH)
 		self.log.info("Message Received : %s",messages)
@@ -66,28 +72,28 @@ class Client(asyncore.dispatcher):
 			parsed = message.split("\t")
 			code = parsed[0]
 			if(code == "ADV"):
-				print "You are playing against : "+parsed[1]
 				self.adv = parsed[1]
-				time.sleep(2)
 
 			if(code == "WHO"):
 				msg = "WHO\t"+str(self.name)+"\t\n"
 				self.send(msg)
 				
 			if(code == "GO"):
-				clear()
-				print "Playing against : \t", self.adv
-				self.pokemons[1].disp_front()
-				self.pokemons[0].disp_back()
+				self.printscreen()
 				self.pokemons[0].disp_attak()
+				print ""
 				msg = raw_input("Select Attack [1-4] : ")
 				self.send("ATT\t" + str(msg))
+				self.printscreen()
+				print ""
 				print "Waiting for ",self.pokemons[1].name," to select his attack..."
+				print ""
 				
 			if(code == 'UPD'):
-				# Update lives
 				self.pokemons[0].life = int(parsed[1])
-				self.pokemons[1].life = int(parsed[2])
+
+			if(code == 'EUPD'):
+				self.pokemons[1].life = int(parsed[1])
 
 			if(code == 'ATT'):
 				# Other pokemon attacked
@@ -107,18 +113,49 @@ class Client(asyncore.dispatcher):
 						msg = msg + "It's super effective ! "
 					if(eff < 1):
 						msg = msg + "It's not very effective ... "
+						
+				self.printscreen()
+				print ""
 				print msg
+				print ""
+				raw_input("(x)")
 
 			if(code == 'HIE'):
-				self.pokemons[0].affected = parsed[1]
-				print self.pokemons[0].name, " is ", self.pokemons[0].affected, " !"
-				time.sleep(2)
+				if(parsed[1]=="STOP"):
+					self.pokemons[0].affected = ""
+				else:
+					self.pokemons[0].affected = parsed[1]
+					self.printscreen()
+					print ""
+					print self.pokemons[0].name, " is ", self.pokemons[0].affected, " !"
+					print ""
+					raw_input("(x)")
 
 			if(code == 'ATE'):
-				self.pokemons[1].affected = parsed[1]
-				print self.pokemons[1].name, " is ", self.pokemons[1].affected, " !"
-				time.sleep(2)
+				if(parsed[1]=="STOP"):
+					self.pokemons[0].affected = ""
+				else:
+					self.pokemons[1].affected = parsed[1]
+					self.printscreen()
+					print ""
+					print self.pokemons[1].name, " is ", self.pokemons[1].affected, " !"
+					print ""
+					raw_input("(x)")
 
+			if(code == 'AFF'):
+				self.printscreen()
+				print ""
+				print self.pokemons[0].name, parsed[1]
+				print ""
+				raw_input("(x)")
+				
+			if(code == 'EAFF'):
+				self.printscreen()
+				print ""
+				print self.pokemons[1].name, parsed[1]
+				print ""
+				raw_input("(x)")
+				
 			if(code == 'HIT'):
 				# You got attacked
 				att_name = parsed[1]
@@ -127,7 +164,7 @@ class Client(asyncore.dispatcher):
 				eff  = float(parsed[4])
 
 				msg = self.pokemons[0].name + " used : " + att_name + ". "
-			
+				
 				if(succ == 0):
 					msg = msg + "But it failed ! "
 				else:
@@ -135,19 +172,23 @@ class Client(asyncore.dispatcher):
 						msg = msg + "Critical hit ! "
 					if(eff > 1):
 						msg = msg + "It's super effective ! "
-					if(eff < 1):
+					if(eff < 1 and eff > 0):
 						msg = msg + "It's not very effective ... "
+					if(eff == 0):
+						msg = msg + "It doesn't do anything ! "
+				self.printscreen()
+				print ""
 				print msg
-
-			
-			if(code == 'LOSE'):
-				# End, you lose
-				print "You lose."
-				exit(0)
-			
-			if(code == 'WIN'):
-				# End, you win
-				print "You win."
+				print ""
+				raw_input("(x)")
+				
+			if(code == 'END'):
+				if(parsed[1]=='0'):
+					print "You lose."
+				if(parsed[1]=='1'):
+					print "You win."
+				if(parsed[1]=='2'):
+					print "Nobody wins !"
 				exit(0)
 			
 			if(code == 'AV'):

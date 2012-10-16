@@ -6,13 +6,14 @@ import time
 import sys
 import getopt
 import random
+import asyncore
 sys.path.append('./Classes');
 
 ### My Classes ###
 from Pokemon import *
 from Types import *
 from Pokedex import *
-
+from PokeFight import *
 MAX_MESSAGE_LENGTH = 1024
 
 
@@ -20,32 +21,8 @@ class Usage(Exception):
 	def __init__(self, msg):
 		self.msg = msg
 
-class Fight():
-	
-	pokedex = -1
-	choices = 3
-	
-	def __init__(self,p1,p2,c1,c2):
-		self.p1 = p1
-		self.p2 = p2
-		self.c1 = c1
-		self.c2 = c2
-		self.a1 = -1
-		self.a2 = -1
-
-class Fights():
-	fights = []
-	
-	@classmethod
-	def get_fight(self,s):
-		for f in self.fights:
-			if(f.c1.socket == s or f.c2.socket == s):
-				return f
-		return -1
 
 class RemoteClient(asyncore.dispatcher):
-
-	"""Wraps a remote client socket."""
 
 	def __init__(self, host, socket, address):
 		asyncore.dispatcher.__init__(self, socket)
@@ -57,7 +34,8 @@ class RemoteClient(asyncore.dispatcher):
 
 	def say(self, message):
 		self.outbox.append(message)
-		
+
+
 	def handle_read(self):
 		client_message = self.recv(MAX_MESSAGE_LENGTH)
 		print "message received : ",client_message
@@ -65,139 +43,66 @@ class RemoteClient(asyncore.dispatcher):
 		for message in messages:
 			parsed = message.split("\t")
 			code = parsed[0]
-			
+
 			f = Fights.get_fight(self.socket)
-			if(f.c1.socket == self.socket):
-				pos = 1
+			if(f.client[0].socket == self.socket):
+				pos = 0
 			else:
-				pos = 2
-				
+				pos = 1
+
 			if(code=="CHOSEN"):
-				if(pos==1):
-					if(f.a1 == -1):
-						try:
-							if(int(parsed[1]) > len(self.av_pok) or int(parsed[1]) < 1):
-								raise Exception
-							f.p1 = self.av_pok[int(parsed[1]) - 1]
-							print "Number 1 selected ", f.p1.name
-						except:
-							f.c1.say("CHOOSE\t")
-				else:
+				if(f.attack[pos] == -1):
 					try:
 						if(int(parsed[1]) > len(self.av_pok) or int(parsed[1]) < 1):
 							raise Exception
-						f.p2 = self.av_pok[int(parsed[1]) - 1]
-						print "Number 2 selected ", f.p2.name
+						f.pokemon[pos] = self.av_pok[int(parsed[1]) - 1]
+						print "Number ",pos," selected ",f.pokemon[pos].name
 					except:
-						f.c2.say("CHOOSE\t")
-				if(f.p1 != -1 and f.p2 != -1):
+						f.client[pos].say("CHOOSE\t")
+				if(f.pokemon[0] != -1 and f.pokemon[1] != -1):
 					self.informfight(f)
 
 			if(code=="ATT"):
-				if(pos==1):
-					if(f.a1 == -1):
-						try:
-							if(int(parsed[1]) > 4 or int(parsed[1]) < 1):
-								raise Exception
-							f.a1 = int(parsed[1]) 
-							print "Attacking using ", f.a1
-						except:
-							f.c1.say("GO\t")
-				else:
+				if(f.attack[pos] == -1):
 					try:
 						if(int(parsed[1]) > 4 or int(parsed[1]) < 1):
 							raise Exception
-						f.a2 = int(parsed[1])
-						print "Attacking using ", f.a2
+						f.attack[pos] = int(parsed[1]) 
+						print "Attacking using ", f.attack[pos]
 					except:
-						f.c2.say("GO\t")
-				
-				if(f.a1 != -1 and f.a2 != -1):
-					# Attacks
+						f.client[pos].say("GO\t")
 
-					
-					att 		= 	f.p1.attacks[int(f.a1) - 1]
-					success 	= 	Pokemon.success(f.p1,f.p2,att)
-					critical 	= 	Pokemon.critical(f.p1)
-					eff 		=	Types.get_eff(f.p2.type,att.type)
-					f.p2.hit(f.p1,f.p2,att,success,critical,eff)
-					f.c2.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
-					f.c1.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
+				if(f.attack[0] != -1 and f.attack[1] != -1):
+					f.handle_attacks()
 
-					if(f.p2.apply_effect(att)):
-						f.c2.send("HIE\t"+f.p2.affected+"\t\n")
-						f.c1.send("ATE\t"+f.p2.affected+"\t\n")
-					
-					time.sleep(2)
-										
-					if(f.p2.life <= 0):
-						f.c1.send("WIN\t\n")
-						f.c2.send("LOSE\t\n")
-
-					att 		= 	f.p2.attacks[int(f.a2) - 1]
-					success 	= 	Pokemon.success(f.p2,f.p1,att)
-					critical 	= 	Pokemon.critical(f.p2)
-					eff 		=	Types.get_eff(f.p1.type,att.type)
-					f.p1.hit(f.p2,f.p1,att,success,critical,eff)					
-					f.c1.send("ATT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
-					f.c2.send("HIT\t" + att.name + "\t" + str(success) + "\t" + str(critical) + "\t" + str(eff)+"\t\n")
-					
-					if(f.p1.apply_effect(att)):
-						f.c2.send("ATE\t"+f.p1.affected+"\t\n")
-						f.c1.send("HIE\t"+f.p1.affected+"\t\n")
-					
-					time.sleep(2)
-
-					if(f.p1.life <= 0):
-						f.c2.send("WIN\t\n")
-						f.c1.send("LOSE\t\n")
-					
-					f.a1 = -1
-					f.a2 = -1
-					print f.p1
-					print f.p2
-					
-					message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
-					f.c1.say(message)
-					message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
-					f.c2.say(message)
-					
-					f.c1.say("GO\t\n")
-					f.c2.say("GO\t\n")
-			
 			if(code == "WHO"):
 				f = Fights.get_fight(self.socket)
-				if(f.c1.socket == self.socket):
+				if(f.client[0].socket == self.socket):
 					f.n1 = parsed[1]
-					f.c2.say("ADV\t"+parsed[1]+"\t\n")
+					f.client[1].say("ADV\t"+parsed[1]+"\t\n")
 				else:
 					f.n2 = parsed[1]
-					f.c1.say("ADV\t"+parsed[1]+"\t\n")
+					f.client[0].say("ADV\t"+parsed[1]+"\t\n")
 
 				self.informed = True
-				if(f.c1.informed and f.c2.informed):
+				if(f.client[0].informed and f.client[1].informed):
 					self.informchoices(f,Fight.choices)	
-			
-	def informfight(self,f):
-		message = f.p1.to_socket()
-		f.c1.say("POKE\t0\t" + message)
-		f.c2.say("POKE\t1\t" + message)
-	
-		message = f.p2.to_socket()
-		f.c1.say("POKE\t1\t"+message)
-		f.c2.say("POKE\t0\t"+message)
 
-		message = "UPD\t"+ str(f.p1.life) + "\t" + str(f.p2.life) + "\t\n"
-		f.c1.say(message)
-		message = "UPD\t"+ str(f.p2.life) + "\t" + str(f.p1.life) + "\t\n"
-		f.c2.say(message)
-			
-		f.c1.say("GO\t\n")
-		f.c2.say("GO\t\n")
-	
+	def informfight(self,f):
+		message = f.pokemon[0].to_socket()
+		f.client[0].say("POKE\t0\t" + message)
+		f.client[1].say("POKE\t1\t" + message)
+
+		message = f.pokemon[1].to_socket()
+		f.client[0].say("POKE\t1\t"+message)
+		f.client[1].say("POKE\t0\t"+message)
+
+		f.client[0].say("GO\t\n")
+		f.client[1].say("GO\t\n")
+
 
 	def informchoices(self,f,number):
-		for p in [f.c1,f.c2]:
+		for p in [f.client[0],f.client[1]]:
 			for i in range(number):
 				fail = 1
 				while(fail==1):
@@ -210,18 +115,18 @@ class RemoteClient(asyncore.dispatcher):
 					except:
 						fail = 1
 				p.av_pok.append(P1)
-				
-		for p in f.c1.av_pok:
-			f.c1.say("AV\t" + p.to_socket() + "\t\n")
-			f.c2.say("ADVAV\t" + p.to_socket() + "\t\n")
-		
-		for p in f.c2.av_pok:
-			f.c2.say("AV\t" + p.to_socket() + "\t\n")
-			f.c1.say("ADVAV\t" + p.to_socket() + "\t\n")
-			
-		f.c1.say("CHOOSE\t\n")
-		f.c2.say("CHOOSE\t\n")
-				
+
+		for p in f.client[0].av_pok:
+			f.client[0].say("AV\t" + p.to_socket() + "\t\n")
+			f.client[1].say("ADVAV\t" + p.to_socket() + "\t\n")
+
+		for p in f.client[1].av_pok:
+			f.client[1].say("AV\t" + p.to_socket() + "\t\n")
+			f.client[0].say("ADVAV\t" + p.to_socket() + "\t\n")
+
+		f.client[0].say("CHOOSE\t\n")
+		f.client[1].say("CHOOSE\t\n")
+
 	def handle_write(self):
 		if not self.outbox:
 			return
@@ -256,8 +161,8 @@ class Host(asyncore.dispatcher):
 			Fights.fights.append(f)
 			self.fighters = []
 			f=Fights.get_fight(socket)
-			f.c1.say("WHO\t\n")
-			f.c2.say("WHO\t\n")
+			f.client[0].say("WHO\t\n")
+			f.client[1].say("WHO\t\n")
 		
 	def handle_read(self):
 		print self.socket

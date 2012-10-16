@@ -42,10 +42,8 @@ class Pokedex:
 				break
 
 		if(attXML == -1):
-			print "Couldn't find attack ",name,", using random."
 			attXML = self.attdex[random.randint(0,len(self.attdex))]
-			name = self.clear_get(attXML,'name')
-
+			name = attXML.getAttribute("name")
 
 		type 		= 	self.clear_get(attXML,'type')
 		strength	=	self.clear_get(attXML,'power')
@@ -56,7 +54,7 @@ class Pokedex:
 		
 		try:
 			t = Types.t[type]
-			if(int(strength) < 5):
+			if(len(name) < 2):
 				raise Exception
 			for a in attacks:
 				if(a.name == name):
@@ -64,8 +62,6 @@ class Pokedex:
 			return Attack(name,type,int(strength),float(accuracy),target,use,init)
 
 		except:
-			print "Type unknown : ", type
-			print "or strength too weak : ", strength
 			raise Exception
 		
 	def get_pok(self, id, level=5):
@@ -95,7 +91,7 @@ class Pokedex:
 				attacks.append(att)
 				i=i+1
 			except:
-				print "fail"
+				pass
 		while(len(attacks) < 4):
 			try:
 				attacks.append(self.get_att("void"))

@@ -295,7 +295,4 @@ class Types:
 		
 	@classmethod
 	def get_eff(cls,p_type,at_type):
-		print "get_eff"
-		print p_type
-		print at_type
 		return Types.t[p_type][at_type]

@@ -62,13 +62,11 @@ class Attack:
 		self.target		= target
 		self.use		= use
 		self.init		= init
-		self.effect		= ""
+		self.effect		= -1
 		self.effect_proba = 1
 		try:
 			todo = self.init.split("\n")[2].split("[")[2].split("]")[0].split(",")
-			print todo
 			self.effect = Effects.effects[todo[0]]
-			#self.effect = todo[0]
 			self.effect_proba = todo[1]
 		except:
 			pass
@@ -157,9 +155,9 @@ class Pokemon:
 
 	def apply_effect(self,at):
 		if(random.random() < at.effect_proba):
-			self.affected = at.effect
-			if(self.affected != ''):
-				return True		
+			if(at.effect != -1):
+				self.affected = at.effect
+				return True
 		return False
 	
 	def disp_front(self):
