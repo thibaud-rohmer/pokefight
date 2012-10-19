@@ -27,7 +27,7 @@ def main(argv=None):
 		argv = sys.argv
 	try:
 		try:
-			opts, args = getopt.getopt(argv[1:], "s:p:n:bdc",[])
+			opts, args = getopt.getopt(argv[1:], "s:p:n:f:bdch",[])
 		except getopt.error, msg:
 			raise Usage(msg)
 			
@@ -45,6 +45,10 @@ def main(argv=None):
 				logging.basicConfig(level=logging.INFO)
 			if option == "-c":
 				TypeColor.color_print = True
+			if option == "-h":
+				Client.hidden = True
+			if option == "-f":
+				Client.file = value
 	except Usage, err:
 		print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
 		print >> sys.stderr, "\t for help use --help"

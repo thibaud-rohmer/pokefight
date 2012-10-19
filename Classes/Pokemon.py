@@ -162,12 +162,15 @@ class Pokemon:
 				return True
 		return False
 	
+	def disp_small(self):
+		print self.name,"_",self.type," (", self.affected ,") = ",self.life,"/",self.maxlife
+		
 	def disp_front(self):
 		print  TypeColor.getcol(self.type) + self.name + " lvl." + str(self.level) + " - " + self.type + TypeColor.clear() + " " + self.affected
 		if(Pokemon.boobs):
-			print self.get_life() + "\t\t\t\t\t" + "(o Y o)"
+			print self.get_life() + str(self.life) +"/" +str(self.maxlife) + "\t\t\t\t" + "(o Y o)"
 		else:
-			print self.get_life() + "\t\t\t\t\t" + "*_*"
+			print self.get_life() + str(self.life) +"/" +str(self.maxlife) + "\t\t\t\t\t" + "*_*"
 		print ""
 		print ""
 		print ""

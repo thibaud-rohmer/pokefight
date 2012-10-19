@@ -16,6 +16,9 @@ MAX_MESSAGE_LENGTH = 1024
 
 
 class Client(asyncore.dispatcher):
+	
+	hidden = False
+	file = "client.py"
 	def __init__(self, host_address, name):
 		asyncore.dispatcher.__init__(self)
 		self.log = logging.getLogger('Client (%7s)' % name)
@@ -45,13 +48,21 @@ class Client(asyncore.dispatcher):
 		pass
 		
 	def printscreen(self):
-		print ""
-		print "================================================================================"		
-		print "Playing against : \t", self.adv
-		print "================================================================================"		
-		self.pokemons[1].disp_front()
-		self.pokemons[0].disp_back()
-		print "================================================================================"
+		if(self.hidden):
+			print "adv = ",self.adv
+			print self.hide()
+			self.pokemons[1].disp_small()
+			print self.hide()
+			self.pokemons[0].disp_small()
+			print self.hide()			
+		else:
+			print ""
+			print "================================================================================"		
+			print "Playing against : \t", self.adv
+			print "================================================================================"		
+			self.pokemons[1].disp_front()
+			self.pokemons[0].disp_back()
+			print "================================================================================"
 		
 	def handle_read(self):
 		messages = self.recv(MAX_MESSAGE_LENGTH)
@@ -73,12 +84,15 @@ class Client(asyncore.dispatcher):
 			if(code == "GO"):
 				self.printscreen()
 				self.pokemons[0].disp_attak()
-				print ""
-				msg = raw_input("Select Attack [1-4] : ")
+				if(self.hidden):
+					msg = raw_input("def Att[1-4] = ")					
+				else:					
+					print ""
+					msg = raw_input("Select Attack [1-4] : ")
 				self.send("ATT\t" + str(msg))
 				self.clear()
 				print ""
-				print "Waiting for ",self.pokemons[1].name," to select his attack..."
+				print "Wait"
 				print ""
 				
 			if(code == 'UPD'):
@@ -115,6 +129,8 @@ class Client(asyncore.dispatcher):
 				else:
 					self.pokemons[0].affected = parsed[1]
 					print self.pokemons[0].name, " is ", self.pokemons[0].affected, " !"
+					print self.hide()
+					
 
 			if(code == 'ATE'):
 				if(parsed[1]=="STOP"):
@@ -122,12 +138,16 @@ class Client(asyncore.dispatcher):
 				else:
 					self.pokemons[1].affected = parsed[1]
 					print self.pokemons[1].name, " is ", self.pokemons[1].affected, " !"
+					print self.hide()
+					
 					
 			if(code == 'AFF'):
 				print self.pokemons[0].name, parsed[1]
+				print self.hide()
 				
 			if(code == 'EAFF'):
 				print self.pokemons[1].name, parsed[1]
+				print self.hide()
 				
 			if(code == 'HIT'):
 				# You got attacked
@@ -151,6 +171,7 @@ class Client(asyncore.dispatcher):
 						msg = msg + "It doesn't do anything ! "
 				# self.printscreen()
 				print msg
+				print self.hide()
 				
 			if(code == 'END'):
 				if(parsed[1]=='0'):
@@ -159,6 +180,7 @@ class Client(asyncore.dispatcher):
 					print "You win."
 				if(parsed[1]=='2'):
 					print "Nobody wins !"
+				print self.hide()
 				exit(0)
 			
 			if(code == 'AV'):
@@ -198,8 +220,17 @@ class Client(asyncore.dispatcher):
 				self.pokemons[int(parsed[1])] = Pokemon(parsed[2],parsed[3],int(parsed[4]),42,42,42,int(parsed[5]),attacks)
 				self.clear()
 				
+	def hide(self):
+		if(self.hidden):
+			l = file(Client.file).readlines()
+			print random.choice(l)
+
 	def clear(self):
-		a="\n"
+		l=["\n"]
+		a=""
+		if(Client.hidden):
+			l = file(Client.file).readlines()
+
 		for i in range(0,200):
-			a = a + "\n"
+			a = a + random.choice(l)
 		print a
