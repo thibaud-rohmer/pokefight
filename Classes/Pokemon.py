@@ -125,6 +125,8 @@ class Pokemon:
 	@classmethod
 	def success(cls,p1,p2,att):
 		proba = att.accuracy
+		if(proba == 0):
+			proba = 0.80
 		print "Success proba : ", proba
 		if(random.random() < proba):
 			return 1
