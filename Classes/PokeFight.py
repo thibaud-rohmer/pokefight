@@ -135,7 +135,7 @@ class Fight():
 		eff 		=	Types.get_eff(self.pokemon[1-i].type,att.type)
 		self.pokemon[1-i].hit(self.pokemon[i],self.pokemon[1-i],att,success,critical,eff)
 
-		if(self.pokemon[i].attacks[self.attack[i]].name == "Explosion" or self.pokemon[i].attacks[self.attack[i]].name == "Selfdestruct" ):
+		if(self.pokemon[i].attacks[int(self.attack[i]) -1].name == "Explosion" or self.pokemon[i].attacks[int(self.attack[i]) -1].name == "Selfdestruct" ):
 			self.pokemon[i].life = 0
 			
 		# Update lives
