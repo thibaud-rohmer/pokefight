@@ -140,7 +140,6 @@ class Host(asyncore.dispatcher):
 		self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.bind(address)
 		self.listen(1)
-		self.remote_clients = []
 		self.fighters = []
 		self.fights = []
 		Fight.pokedex = Pokedex()
@@ -149,8 +148,7 @@ class Host(asyncore.dispatcher):
 	def handle_accept(self):
 		socket, addr = self.accept() # For the remote client.
 		self.log.info('Accepted client at %s', addr)
-		self.remote_clients.append(RemoteClient(self, socket, addr))
-		self.fighters.append(self.remote_clients[-1])
+		self.fighters.append(RemoteClient(self, socket, addr))
 		if(len(self.fighters) == 2):
 			f=Fight(-1,-1,self.fighters[0],self.fighters[1])
 			Fights.fights.append(f)
@@ -162,8 +160,3 @@ class Host(asyncore.dispatcher):
 	def handle_read(self):
 		print self.socket
 		self.log.info('Received message: %s', self.read())
-
-	def broadcast(self, message):
-		self.log.info('Broadcasting message: %s', message)
-		for remote_client in self.remote_clients:
-			remote_client.say(message)
