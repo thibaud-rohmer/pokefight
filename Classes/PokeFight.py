@@ -78,7 +78,7 @@ class Fight():
 				return False
 
 		if(self.pokemon[i].affected == "Sleeping"):
-			# Wear off proba
+			# Wear off probablity
 			if(random.random() < 0.5):
 				self.client[i].send("AFF\tis sleeping, it can't attack.\t\n")
 				self.client[1-i].send("EAFF\tis sleeping, it can't attack.\t\n")
