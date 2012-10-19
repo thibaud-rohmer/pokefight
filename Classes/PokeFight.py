@@ -19,29 +19,44 @@ class Fight():
 		self.client = [c1,c2]
 		self.attack = [-1,-1]
 		
+		
+	def check_life(self,i):
+		if(self.pokemon[1-i].life <= 0):
+			if(self.pokemon[i].life <= 0):
+				self.client[i].send("END\t2\t\n")
+				self.client[1-i].send("END\t2\t\n")
+			else:	
+				self.client[i].send("END\t1\t\n")
+				self.client[1-i].send("END\t0\t\n")		
+		elif(self.pokemon[i].life <= 0):
+				self.client[i].send("END\t0\t\n")
+				self.client[1-i].send("END\t1\t\n")
+		
+		
 	def handle_attacks(self):
 		
 		order_table = self.get_order()
-
+		effect_order_table = []
 		for i in order_table:
 			att		= 	self.pokemon[i].attacks[int(self.attack[i]) - 1]
 			
 			self.handle_pre_effects(i)
-			self.handle_attack_effects(i)
+			self.check_life(i)
+			
+			if(self.handle_attack_effects(i)):
+				effect_order_table.append(i)
 
-			# Check life
-			if(self.pokemon[1-i].life <= 0):
-				self.client[i].send("END\t1\t\n")
-				self.client[1-i].send("END\t0\t\n")
-
-			self.client[1-i].say("UPD\t"+ str(self.pokemon[1-i].life)+"\t\n")
-			self.client[i].say("EUPD\t"+ str(self.pokemon[1-i].life)+"\t\n")			
-
-		for i in order_table:
-			self.handle_post_effects(i)
-
+			self.check_life(i)
+					
 			self.client[1-i].say("UPD\t"+ str(self.pokemon[1-i].life)+"\t\n")
 			self.client[i].say("EUPD\t"+ str(self.pokemon[1-i].life)+"\t\n")
+
+		for i in effect_order_table:
+			self.handle_post_effects(i)
+			
+			self.client[1-i].say("UPD\t"+ str(self.pokemon[1-i].life)+"\t\n")
+			self.client[i].say("EUPD\t"+ str(self.pokemon[1-i].life)+"\t\n")
+			self.check_life(i)
 			
 		
 		self.attack[0] = -1
@@ -60,14 +75,14 @@ class Fight():
 			if(random.random() < 0.25):
 				self.client[i].send("AFF\tis paralysed, it can't attack.\t\n")
 				self.client[1-i].send("EAFF\tis paralysed, it can't attack.\t\n")
-				return
+				return False
 
 		if(self.pokemon[i].affected == "Sleeping"):
 			# Wear off proba
 			if(random.random() < 0.5):
 				self.client[i].send("AFF\tis sleeping, it can't attack.\t\n")
 				self.client[1-i].send("EAFF\tis sleeping, it can't attack.\t\n")
-				return
+				return False
 			else:
 				self.client[i].affected = ""
 				self.client[1-i].send("HIE\tSTOP\t\n")
@@ -80,7 +95,7 @@ class Fight():
 			if(random.random() < 0.5):
 				self.client[i].send("AFF\tis frozen, it can't attack.\t\n")
 				self.client[1-i].send("EAFF\tis frozen, it can't attack.\t\n")
-				return
+				return False
 			else:
 				self.client[i].affected = ""
 				self.client[1-i].send("HIE\tSTOP\t\n")
@@ -105,7 +120,7 @@ class Fight():
 
 					self.client[i].send("AFF\thurt itself in its confusion !\t\n")
 					self.client[1-i].send("EAFF\thurt itself in its confusion !\t\n")
-					return
+					return False
 			else:
 				self.client[i].affected = ""
 				self.client[1-i].send("HIE\tSTOP\t\n")
@@ -120,6 +135,9 @@ class Fight():
 		eff 		=	Types.get_eff(self.pokemon[1-i].type,att.type)
 		self.pokemon[1-i].hit(self.pokemon[i],self.pokemon[1-i],att,success,critical,eff)
 
+		if(self.pokemon[i].attacks[self.attack[i]].name == "Explosion" or self.pokemon[i].attacks[self.attack[i]].name == "Selfdestruct" ):
+			self.pokemon[i].life = 0
+			
 		# Update lives
 		self.client[i].send("EUPD\t"+ str(self.pokemon[1-i].life)+"\t\n")			
 		self.client[1-i].send("UPD\t"+ str(self.pokemon[1-i].life)+"\t\n")
@@ -132,6 +150,8 @@ class Fight():
 		if(self.pokemon[1-i].apply_effect(att)):
 			self.client[1-i].send("HIE\t"+self.pokemon[1-i].affected+"\t\n")
 			self.client[i].send("ATE\t"+self.pokemon[1-i].affected+"\t\n")
+		
+		return (success == 1)
 	
 	def handle_post_effects(self,i):
 		if(self.pokemon[i].affected == "Poisoned"):
@@ -155,7 +175,6 @@ class Fight():
 
 			self.client[i].send("AFF\tburns !\t\n")
 			self.client[1-i].send("EAFF\tburns !\t\n")
-		
 			
 	def get_order(self):
 		if(self.pokemon[0].speed > self.pokemon[1].speed):
