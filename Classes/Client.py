@@ -38,6 +38,7 @@ class Client(asyncore.dispatcher):
 
 	def handle_write(self):
 		if not self.outbox:
+			time.sleep(0.1)
 			return
 		message = self.outbox.popleft()
 		if len(message) > MAX_MESSAGE_LENGTH:
